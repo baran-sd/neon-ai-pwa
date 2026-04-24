@@ -1,3 +1,13 @@
+---
+title: Neon AI PWA
+emoji: ⚡
+colorFrom: black
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # ⚡ NeonAI PWA
 
 A premium, "Neon Noir" themed Progressive Web App for AI Image Generation. Built with Next.js 15, Tailwind CSS 4, and integrated with the Pollinations AI & Airtable ecosystem.
