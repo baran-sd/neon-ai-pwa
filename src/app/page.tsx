@@ -69,6 +69,7 @@ export default function Home() {
     const selectedTemplate = templates.find((t) => t.id === selectedTemplateId);
 
     try {
+      const selectedTemplate = templates.find((t) => t.id === selectedTemplateId);
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,6 +77,7 @@ export default function Home() {
           prompt,
           aspectRatio,
           category: "image",
+          styleName: selectedTemplate?.name,
           systemPrompt: selectedTemplate?.text,
         }),
       });
