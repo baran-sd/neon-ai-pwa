@@ -1,7 +1,7 @@
 ---
 title: Neon AI PWA
 emoji: ⚡
-colorFrom: black
+colorFrom: gray
 colorTo: purple
 sdk: docker
 app_port: 7860
