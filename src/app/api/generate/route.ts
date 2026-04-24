@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export async function POST(request: Request) {
   try {
-    const { prompt, model, category, aspectRatio, systemPrompt, styleName, enhance = true } = await request.json();
+    const { prompt, model, category, aspectRatio, systemPrompt, enhance = true } = await request.json();
     const pollinationsKey = process.env.POLLINATIONS_API_KEY;
 
     let finalPrompt = prompt;
@@ -11,24 +11,24 @@ export async function POST(request: Request) {
     // 1. Prompt Enhancement
     if (enhance && category !== 'audio' && category !== 'text') {
       try {
-        const styleInstruction = styleName ? `Applying style: ${styleName}. ` : "";
-        const enhanceResponse = await axios.post('https://gen.pollinations.ai/v1/chat/completions', {
-          model: 'openai-fast',
-          messages: [
-            { 
-              role: 'system', 
-              content: `You are a professional prompt engineer for AI image generation. ${styleInstruction}${systemPrompt || process.env.SYSTEM_ENHANCE_PROMPT || "Transform user input into a highly detailed artistic prompt."} Ensure the output is ONLY in English and contains NO extra explanations or quotes.` 
-            },
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.8
-        }, {
-          headers: pollinationsKey ? { 'Authorization': `Bearer ${pollinationsKey}` } : {},
-          timeout: 40000
-        });
+        const sysMessage = (systemPrompt && systemPrompt.trim()) || process.env.SYSTEM_ENHANCE_PROMPT;
+        
+        if (sysMessage) {
+          const enhanceResponse = await axios.post('https://gen.pollinations.ai/v1/chat/completions', {
+            model: 'openai-fast',
+            messages: [
+              { role: 'system', content: sysMessage },
+              { role: 'user', content: prompt }
+            ],
+            temperature: 0.7
+          }, {
+            headers: pollinationsKey ? { 'Authorization': `Bearer ${pollinationsKey}` } : {},
+            timeout: 40000
+          });
 
-        const enhanced = enhanceResponse.data?.choices?.[0]?.message?.content?.trim();
-        if (enhanced) finalPrompt = enhanced;
+          const enhanced = enhanceResponse.data?.choices?.[0]?.message?.content?.trim();
+          if (enhanced) finalPrompt = enhanced;
+        }
       } catch (err: any) {
         console.warn('Enhancement failed:', err.message);
       }

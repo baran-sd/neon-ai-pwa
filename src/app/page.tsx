@@ -77,7 +77,6 @@ export default function Home() {
           prompt,
           aspectRatio,
           category: "image",
-          styleName: selectedTemplate?.name,
           systemPrompt: selectedTemplate?.text,
         }),
       });
