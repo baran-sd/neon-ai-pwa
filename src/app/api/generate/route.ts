@@ -9,16 +9,22 @@ export async function POST(request: Request) {
     let finalPrompt = prompt;
 
     // 1. Prompt Enhancement
-    console.log(`[Generate] Model: ${model}, Enhance: ${enhance}, SystemPrompt: ${systemPrompt?.substring(0, 50)}...`);
+    console.log(`[Generate] Model: ${model}, Enhance: ${enhance}, HasSystemPrompt: ${!!systemPrompt}`);
+    
+    // Determine if we should enhance
+    const shouldEnhance = (enhance || !!systemPrompt) && category !== 'audio' && category !== 'text';
 
-    if (enhance && category !== 'audio' && category !== 'text') {
+    if (shouldEnhance) {
       try {
         const sysMessage = (systemPrompt && systemPrompt.trim()) || process.env.SYSTEM_ENHANCE_PROMPT;
         
         if (sysMessage) {
-          // Use a smarter model if a specific system prompt is provided
-          const enhanceModel = systemPrompt ? 'openai-large' : 'openai-fast';
-          console.log(`[Generate] Using ${enhanceModel} for enhancement`);
+          // Use a smarter model ONLY if a specific system prompt is provided from Airtable/Template
+          // Use 'openai-fast' for standard enhancement to reduce latency
+          const isCustomTemplate = systemPrompt && systemPrompt.trim().length > 0;
+          const enhanceModel = isCustomTemplate ? 'openai-large' : 'openai-fast';
+          
+          console.log(`[Generate] Enhancement Triggered. Model: ${enhanceModel}, Template: ${systemPrompt?.substring(0, 30)}...`);
           
           const enhanceResponse = await axios.post('https://gen.pollinations.ai/v1/chat/completions', {
             model: enhanceModel,
@@ -29,7 +35,7 @@ export async function POST(request: Request) {
             temperature: 0.7
           }, {
             headers: pollinationsKey ? { 'Authorization': `Bearer ${pollinationsKey}` } : {},
-            timeout: 40000
+            timeout: 50000 // Increased timeout for large models
           });
 
           const enhanced = enhanceResponse.data?.choices?.[0]?.message?.content?.trim();
@@ -40,6 +46,7 @@ export async function POST(request: Request) {
         }
       } catch (err: any) {
         console.warn('Enhancement failed:', err.message);
+        // Fallback to original prompt is already handled by finalPrompt = prompt
       }
     }
 

@@ -12,6 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
@@ -39,6 +47,8 @@ export default function Home() {
   const [selectedModel, setSelectedModel] = useState("flux");
   const [loading, setLoading] = useState(false);
   const [enhance, setEnhance] = useState(true);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [mediaType, setMediaType] = useState<"image" | "video" | "audio">("image");
   const [history, setHistory] = useState<GenerationResult[]>([]);
 
   useEffect(() => {
@@ -94,13 +104,13 @@ export default function Home() {
       const data = await response.json();
 
       if (data.success) {
+        setImageUrl(data.imageUrl);
         const newResult: GenerationResult = {
           id: Math.random().toString(36).substring(7),
           prompt: data.enhancedPrompt || prompt,
           imageUrl: data.imageUrl,
           timestamp: Date.now(),
         };
-
         const updatedHistory = [newResult, ...history];
         setHistory(updatedHistory);
         localStorage.setItem("gen_history", JSON.stringify(updatedHistory));
@@ -117,19 +127,48 @@ export default function Home() {
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-8 md:px-8 lg:px-16">
-      {/* Header */}
       <header className="flex items-center justify-between mb-12">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_20px_rgba(var(--primary),0.4)]">
-            <span className="material-symbols-outlined text-white font-bold">bolt</span>
+            <Zap className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold tracking-tighter neon-text">NeonAI</h1>
         </div>
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <span className="material-symbols-outlined">notifications</span>
-          </Button>
-          <Avatar className="w-10 h-10 border-2 border-primary/20 shadow-xl">
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger render={
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 transition-colors">
+                <Settings2 className="w-5 h-5 text-muted-foreground" />
+              </Button>
+            } />
+            <DropdownMenuContent className="glass min-w-[200px]" align="end">
+              <DropdownMenuLabel>Active Configuration</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="flex justify-between items-center gap-4">
+                <span className="text-xs text-muted-foreground">Model</span>
+                <span className="text-xs font-mono text-primary">{selectedModel}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex justify-between items-center gap-4">
+                <span className="text-xs text-muted-foreground">Style</span>
+                <span className="text-xs font-mono text-secondary">
+                  {templates.find(t => t.id === selectedTemplateId)?.name.split(' ').pop() || 'None'}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex justify-between items-center gap-4">
+                <span className="text-xs text-muted-foreground">Ratio</span>
+                <span className="text-xs font-mono">{aspectRatio}</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => toast.info("Settings are synced with Airtable")}>
+                <span className="text-xs flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[14px]">sync</span>
+                  Status: Connected
+                </span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <Avatar className="w-10 h-10 border-2 border-primary/20 shadow-xl ml-2">
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>AI</AvatarFallback>
           </Avatar>
@@ -252,6 +291,46 @@ export default function Home() {
             </CardContent>
           </Card>
         </section>
+
+        {/* Result Preview Section */}
+        {imageUrl && !loading && (
+          <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Card className="glass border-primary/30 shadow-[0_0_50px_rgba(var(--primary),0.2)] overflow-hidden">
+              <CardContent className="p-0">
+                <div className="relative aspect-square md:aspect-video w-full bg-black/40 flex items-center justify-center min-h-[300px]">
+                  {mediaType === "image" ? (
+                    <img 
+                      src={imageUrl} 
+                      alt="Result" 
+                      className="w-full h-full object-contain"
+                    />
+                  ) : mediaType === "video" ? (
+                    <video 
+                      src={imageUrl} 
+                      controls 
+                      autoPlay 
+                      loop 
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-6 p-12 w-full">
+                      <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
+                        <Music className="w-12 h-12 text-primary" />
+                      </div>
+                      <audio src={imageUrl} controls autoPlay className="w-full max-w-md" />
+                    </div>
+                  )}
+                  
+                  <div className="absolute top-4 right-4 flex gap-2">
+                    <Button size="icon" variant="secondary" className="rounded-full backdrop-blur-md bg-black/40 border-white/10" onClick={() => window.open(imageUrl, '_blank')}>
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+        )}
 
         {/* History Section */}
         {history.length > 0 && (
