@@ -136,11 +136,9 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-2">
           <DropdownMenu>
-            <DropdownMenuTrigger render={
-              <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 transition-colors">
-                <Settings2 className="w-5 h-5 text-muted-foreground" />
-              </Button>
-            } />
+            <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "rounded-full hover:bg-primary/10 transition-colors")}>
+              <Settings2 className="w-5 h-5 text-muted-foreground" />
+            </DropdownMenuTrigger>
             <DropdownMenuContent className="glass min-w-[200px]" align="end">
               <DropdownMenuLabel>Active Configuration</DropdownMenuLabel>
               <DropdownMenuSeparator />
