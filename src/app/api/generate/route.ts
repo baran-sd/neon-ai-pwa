@@ -16,9 +16,12 @@ export async function POST(request: Request) {
         const sysMessage = (systemPrompt && systemPrompt.trim()) || process.env.SYSTEM_ENHANCE_PROMPT;
         
         if (sysMessage) {
-          console.log('[Generate] Using System Message for enhancement');
+          // Use a smarter model if a specific system prompt is provided
+          const enhanceModel = systemPrompt ? 'openai-large' : 'openai-fast';
+          console.log(`[Generate] Using ${enhanceModel} for enhancement`);
+          
           const enhanceResponse = await axios.post('https://gen.pollinations.ai/v1/chat/completions', {
-            model: 'openai-fast',
+            model: enhanceModel,
             messages: [
               { role: 'system', content: sysMessage },
               { role: 'user', content: prompt }
@@ -47,11 +50,17 @@ export async function POST(request: Request) {
     params.set('seed', Math.floor(Math.random() * 1000000).toString());
     params.set('nologo', 'true');
 
+    // Add reasoning for supported models
+    if (model?.includes('nanobanana')) {
+      params.set('reasoning', 'pro');
+    }
+
     let imageUrl = '';
     const [width, height] = (aspectRatio || '1024x1024').split('x');
 
     if (category === 'video') {
       params.set('aspectRatio', parseInt(width) > parseInt(height) ? '16:9' : '9:16');
+      if (model === 'wan') params.set('audio', 'true');
       imageUrl = `https://gen.pollinations.ai/video/${encodeURIComponent(finalPrompt)}?${params.toString()}`;
     } else if (category === 'audio') {
       imageUrl = `https://gen.pollinations.ai/audio/${encodeURIComponent(prompt)}?${params.toString()}`;
