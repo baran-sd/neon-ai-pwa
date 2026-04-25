@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sparkles, Zap, Music, Image, Send, Layout, Settings2, Download, Share2, History, Trash2, ExternalLink } from "lucide-react";
 
 interface PromptTemplate {
   id: string;
@@ -68,13 +69,14 @@ export default function Home() {
     }
 
     setLoading(true);
-    const selectedTemplate = templates.find((t) => t.id === selectedTemplateId);
-
+    
     try {
       const selectedTemplate = templates.find((t) => t.id === selectedTemplateId);
       
-      const category = ["ltx-2", "nova-reel"].includes(selectedModel) ? "video" : 
-                       ["elevenlabs", "elevenmusic"].includes(selectedModel) ? "audio" : "image";
+      const category = ["ltx-2", "nova-reel", "wan", "veo", "seedance"].includes(selectedModel) ? "video" : 
+                       ["elevenlabs", "elevenmusic", "acestep", "qwen-tts"].includes(selectedModel) ? "audio" : "image";
+      
+      setMediaType(category as any);
 
       const response = await fetch("/api/generate", {
         method: "POST",
