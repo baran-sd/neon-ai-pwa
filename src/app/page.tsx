@@ -35,7 +35,9 @@ export default function Home() {
   const [templates, setTemplates] = useState<PromptTemplate[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState("cadavre");
   const [aspectRatio, setAspectRatio] = useState("1024x1024");
+  const [selectedModel, setSelectedModel] = useState("flux");
   const [loading, setLoading] = useState(false);
+  const [enhance, setEnhance] = useState(true);
   const [history, setHistory] = useState<GenerationResult[]>([]);
 
   useEffect(() => {
@@ -75,8 +77,10 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prompt,
+          model: selectedModel,
           aspectRatio,
           category: "image",
+          enhance,
           systemPrompt: selectedTemplate?.text,
         }),
       });
@@ -169,7 +173,24 @@ export default function Home() {
                   </ScrollArea>
                 </div>
 
-                <div className="w-full md:w-48 space-y-2">
+                <div className="flex-1 space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Model</label>
+                  <Select value={selectedModel} onValueChange={(val) => val && setSelectedModel(val)}>
+                    <SelectTrigger className="bg-white/5 border-white/10 rounded-xl">
+                      <SelectValue placeholder="Select Model" />
+                    </SelectTrigger>
+                    <SelectContent className="glass">
+                      <SelectItem value="flux">Flux.1 Schnell</SelectItem>
+                      <SelectItem value="flux-realism">Flux Realism</SelectItem>
+                      <SelectItem value="flux-anime">Flux Anime</SelectItem>
+                      <SelectItem value="flux-3d">Flux 3D Render</SelectItem>
+                      <SelectItem value="any-dark">Any Dark</SelectItem>
+                      <SelectItem value="turbo">Turbo Speed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="w-full md:w-40 space-y-2">
                   <label className="text-sm font-medium text-muted-foreground">Aspect Ratio</label>
                   <Select value={aspectRatio} onValueChange={(val) => val && setAspectRatio(val)}>
                     <SelectTrigger className="bg-white/5 border-white/10 rounded-xl">
@@ -181,6 +202,20 @@ export default function Home() {
                       <SelectItem value="1792x1024">Wide (16:9)</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="w-full md:w-32 space-y-2 flex flex-col justify-end">
+                   <Button 
+                    variant={enhance ? "default" : "outline"} 
+                    size="sm" 
+                    onClick={() => setEnhance(!enhance)}
+                    className="h-10 rounded-xl gap-2"
+                   >
+                     <span className={cn("material-symbols-outlined text-sm", enhance && "text-white")}>
+                       {enhance ? "auto_awesome" : "flash_off"}
+                     </span>
+                     {enhance ? "Enhanced" : "Fast"}
+                   </Button>
                 </div>
               </div>
 
