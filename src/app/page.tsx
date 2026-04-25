@@ -72,6 +72,10 @@ export default function Home() {
 
     try {
       const selectedTemplate = templates.find((t) => t.id === selectedTemplateId);
+      
+      const category = ["ltx-2", "nova-reel"].includes(selectedModel) ? "video" : 
+                       ["elevenlabs", "elevenmusic"].includes(selectedModel) ? "audio" : "image";
+
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -79,7 +83,7 @@ export default function Home() {
           prompt,
           model: selectedModel,
           aspectRatio,
-          category: "image",
+          category,
           enhance,
           systemPrompt: selectedTemplate?.text,
         }),
@@ -180,12 +184,16 @@ export default function Home() {
                       <SelectValue placeholder="Select Model" />
                     </SelectTrigger>
                     <SelectContent className="glass">
-                      <SelectItem value="flux">Flux.1 Schnell</SelectItem>
-                      <SelectItem value="flux-realism">Flux Realism</SelectItem>
-                      <SelectItem value="flux-anime">Flux Anime</SelectItem>
-                      <SelectItem value="flux-3d">Flux 3D Render</SelectItem>
-                      <SelectItem value="any-dark">Any Dark</SelectItem>
-                      <SelectItem value="turbo">Turbo Speed</SelectItem>
+                      <SelectItem value="flux" className="font-bold">🎨 Flux.1 Schnell</SelectItem>
+                      <SelectItem value="flux-realism">📸 Flux Realism</SelectItem>
+                      <SelectItem value="flux-anime">🌸 Flux Anime</SelectItem>
+                      <SelectItem value="any-dark">🌑 Any Dark</SelectItem>
+                      <SelectItem value="flux-3d">🧊 Flux 3D</SelectItem>
+                      <SelectItem value="turbo">⚡ Turbo Speed</SelectItem>
+                      <SelectItem value="ltx-2" className="text-secondary font-bold">🎬 LTX-2 (Video)</SelectItem>
+                      <SelectItem value="nova-reel" className="text-secondary">🎬 Nova Reel (Video)</SelectItem>
+                      <SelectItem value="elevenlabs" className="text-primary font-bold">🎵 ElevenLabs (Audio)</SelectItem>
+                      <SelectItem value="elevenmusic" className="text-primary">🎵 ElevenLabs (Music)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
