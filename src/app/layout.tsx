@@ -8,11 +8,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "NeonAI | AI Image Generation",
-  description: "Generate stunning AI images with a Neon Noir aesthetic.",
-  manifest: "/manifest.json",
-  themeColor: "#1a1a2e",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+  title: "NeonAI | AI Generation Studio",
+  description: "Generate stunning AI images, videos & audio. Powered by Pollinations.",
+};
+
+export const viewport = {
+  themeColor: "#0a0a0a",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 import { Toaster } from "@/components/ui/sonner";
