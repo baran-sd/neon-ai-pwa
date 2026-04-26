@@ -26,31 +26,13 @@ const MODELS = [
   { value: "qwen-image",  label: "Qwen Image Plus",   icon: "🀄", cat: "image", free: true },
   { value: "klein",       label: "FLUX.2 Klein 4B",   icon: "🌀", cat: "image", free: true },
   { value: "gptimage",    label: "GPT Image 1 Mini",  icon: "🤖", cat: "image", free: true },
-  // ── Image (paid) ──
-  { value: "kontext",     label: "FLUX Kontext",      icon: "✏️", cat: "image", free: false },
-  { value: "gptimage-large", label: "GPT Image 1.5",  icon: "🤖", cat: "image", free: false },
-  { value: "gpt-image-2", label: "GPT Image 2",       icon: "🤖", cat: "image", free: false },
-  { value: "grok-imagine",label: "Grok Imagine",      icon: "🌌", cat: "image", free: false },
-  { value: "grok-imagine-pro", label: "Grok Aurora",  icon: "🌠", cat: "image", free: false },
-  { value: "wan-image-pro",label: "Wan 2.7 Pro 4K",  icon: "🖼️", cat: "image", free: false },
-  { value: "nanobanana",  label: "NanoBanana (Gemini)",icon:"🍌", cat: "image", free: false },
-  { value: "seedream5",   label: "Seedream 5 Lite",   icon: "🌱", cat: "image", free: false },
   // ── Video (free) ──
   { value: "ltx-2",       label: "LTX-2.3 Video",     icon: "🎬", cat: "video", free: true },
   { value: "nova-reel",   label: "Nova Reel 720p",    icon: "🎥", cat: "video", free: true },
-  // ── Video (paid) ──
-  { value: "wan",         label: "Wan 2.6 Video+Audio",icon:"🎞️", cat: "video", free: false },
-  { value: "wan-fast",    label: "Wan 2.2 Fast 480p", icon: "🎞️", cat: "video", free: false },
-  { value: "veo",         label: "Veo 3.1 Fast",      icon: "🔵", cat: "video", free: false },
-  { value: "seedance",    label: "Seedance Lite",     icon: "🌱", cat: "video", free: false },
-  { value: "grok-video-pro",label: "Grok Video Pro",  icon: "🌌", cat: "video", free: false },
   // ── Audio (free) ──
   { value: "elevenlabs",  label: "ElevenLabs TTS",    icon: "🎙️", cat: "audio", free: true },
   { value: "acestep",     label: "ACE-Step 1.5",      icon: "🎵", cat: "audio", free: true },
   { value: "qwen-tts",    label: "Qwen3 TTS",         icon: "🀄", cat: "audio", free: true },
-  // ── Audio (paid) ──
-  { value: "elevenmusic", label: "ElevenLabs Music",  icon: "🎼", cat: "audio", free: false },
-  { value: "qwen-tts-instruct", label: "Qwen TTS Style", icon: "🀄", cat: "audio", free: false },
 ]
   // deduplicate by value+cat
   .filter((m, i, arr) => arr.findIndex(x => x.value === m.value && x.cat === m.cat) === i);
